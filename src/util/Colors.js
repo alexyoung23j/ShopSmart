@@ -12,7 +12,8 @@ const Colors = {
     candyApple: "#FF0800",
     indianRed: "#CD5C5C",
     imperial: "#ED2939",
-    deleteRed: "#FF0000"
+    deleteRed: "#FF0000",
+    darkGreen: "#006400"
 }
 
 export default Colors;

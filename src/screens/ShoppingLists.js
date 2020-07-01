@@ -1,8 +1,10 @@
 import React, {useState, isValidElement, useEffect } from 'react';
-import { Form, Input, Item, Label, Button, Card, Icon, CheckBox } from 'native-base';
-import { StyleSheet, View, Text, KeyboardAvoidingView, TextInput, ImageBackground, Alert } from 'react-native';
+import { Form, Input, Item, Label, Button, Card, CheckBox } from 'native-base';
+import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert } from 'react-native';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 import FloatingTextBox from "../components/FloatingTextBox"
 import ErrorShow from "../components/ErrorShow";
@@ -20,8 +22,9 @@ import { set } from 'react-native-reanimated';
 export default function ShoppingLists(props) {
     const { navigation } = props;
     const [showAddList, setShowAddList] = useState(false)
-    const [newListName, setNewListName] = useState("")
+    const [currentListName, setCurrentListName] = useState("")
     const [newListID, setNewListID] = useState("")
+    const [editListName, setEditListName] = useState(false)
 
     var user = firebase.auth().currentUser;
     var name, email, uid;
@@ -33,32 +36,53 @@ export default function ShoppingLists(props) {
 
 
     function addNewList() { 
-        setNewListName("testList")  
         firestore.collection("lists").doc(user.uid).collection("user_lists").add({
-            listName: newListName,
+            listName: "",
         }).then(function(docRef) {
             setNewListID(docRef.id)
-            console.log("we got here?")
-            console.log(docRef.id)
         })    
+        setEditListName(true)
         setShowAddList(true)  
 
     }
+
+    function modalClose() {
+        setShowAddList(false)
+        setEditListName(false)
+        setCurrentListName("")
+    }
+ 
    
-    return (
+   return (
         <View>
-            <View>
-                <Button onPress={()=> addNewList()}/>
-                <AddListModal listData={[]} listID={newListID} listName={newListName} show={showAddList} onClosePressed={()=>setShowAddList(false)}/> 
-                <Text>Hello</Text>
+            <View style={{paddingTop: "10%", flexDirection: "row"}}>
+                <Text style={styles.headerText}>Lists </Text>
+                <TouchableOpacity style={styles.addNewButton} onPress={() => addNewList()}>
+                    <Icon name="ios-create" size={25} color={Colors.defaultBlack}></Icon>
+                </TouchableOpacity>
             </View>
-        </View>
-        
-        
+            
+            <AddListModal editTitle={editListName} listData={[]} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
+            
+        </View> 
     );
+        
+        
+    
 }
 
+let { height, width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
+    headerText: {
+        fontSize: 50,
+        fontFamily: Fonts.default,
+        paddingLeft: 15
+    }, 
+    addNewButton: {
+        paddingLeft: width*.55,
+        paddingTop: 25
+    },
     modal: {
         height: 80,
         marginTop: "70%",
@@ -73,11 +97,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.smoke,
     },
-    header: {
-        justifyContent: "center",
-        paddingLeft: "20%",
-        flex: 0.24
-    },
+    
     title: {
         color: "#404852",
         fontSize: 45,
