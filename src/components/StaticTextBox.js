@@ -1,11 +1,13 @@
 import React from 'react';
-import { TextInput, Text, StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
+import { TextInput, Text, StyleSheet, View, Dimensions, TouchableOpacity, FlatList } from 'react-native';
+import Autocomplete from 'react-native-autocomplete-input';
+
 import Colors from "../util/Colors";
 import Fonts from "../util/Fonts";
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
-export default function StaticTextBox({secure, text, placeholder, onChange, onEndEditing, error="", onPress}) {
+export default function StaticTextBox({secure, text, placeholder, onChange, onEndEditing,  onPress}) {
     return (
         <View style={styles.TextFieldView}>
             <TextInput
@@ -17,9 +19,10 @@ export default function StaticTextBox({secure, text, placeholder, onChange, onEn
                 onChangeText = {onChange}
                 onEndEditing = {onEndEditing}
             />
+
             <View style={{flex:.15, justifyContent: "center"}}>
                 <TouchableOpacity onPress={onPress}>
-                    <Icon name={"ios-add"} size={40} color={Colors.defaultBlack} />
+                    <Icon name={"ios-close"} size={40} color={Colors.defaultBlack} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -35,6 +38,7 @@ const styles = StyleSheet.create({
         flex:1,
         marginHorizontal: 20,
         fontFamily: Fonts.default,
+        fontWeight: "400",
     },
     TextFieldView: {
         justifyContent: "center",
@@ -43,10 +47,7 @@ const styles = StyleSheet.create({
         width: width *.85,
         borderRadius: 20,
         backgroundColor: Colors.smoke,
-        borderBottomColor: Colors.gray,
-        borderBottomWidth: 0.5,
-        flexDirection: "row"
-
+        flexDirection: "row",         
     }
 })
 

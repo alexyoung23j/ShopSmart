@@ -1,6 +1,6 @@
 import React, {useState, isValidElement, useEffect } from 'react';
 import { Form, Input, Item, Label, Button, Card, CheckBox } from 'native-base';
-import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert, FlatList } from 'react-native';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import FloatingTextBox from "../components/FloatingTextBox"
 import ErrorShow from "../components/ErrorShow";
-import AddListModal from "../components/AddListModal";
+import ListModal from "../components/ListModal";
 import Colors from "../util/Colors";
 import Fonts from "../util/Fonts";
 
@@ -20,11 +20,6 @@ import DismissKeyboard from '../components/DimissKeyboard';
 import { set } from 'react-native-reanimated';
 
 export default function ShoppingLists(props) {
-    const { navigation } = props;
-    const [showAddList, setShowAddList] = useState(false)
-    const [currentListName, setCurrentListName] = useState("")
-    const [newListID, setNewListID] = useState("")
-    const [editListName, setEditListName] = useState(false)
 
     var user = firebase.auth().currentUser;
     var name, email, uid;
@@ -35,6 +30,41 @@ export default function ShoppingLists(props) {
     }
 
 
+    const { navigation } = props;
+    const [showAddList, setShowAddList] = useState(false)
+    const [currentListName, setCurrentListName] = useState("")
+    const [newListID, setNewListID] = useState("")
+    const [editListName, setEditListName] = useState(false)
+
+    const [userLists, setUserLists] = useState([])
+
+    var user = firebase.auth().currentUser;
+    var name, email, uid;
+    if (user != null) {
+        name = user.displayName;
+        email = user.email;
+        uid = user.uid;  
+    }
+
+    function grabUserLists() {
+
+        const listRef = firestore.collection("lists").doc(user.uid).collection("user_lists").get().then(
+            (snapshot) => {
+                snapshot.forEach(doc => {
+                    console.log(doc.listName)
+                })
+            }
+        );
+        
+
+     
+    }
+
+    useEffect(() => {
+        grabUserLists()
+    }, [])
+
+
     function addNewList() { 
         firestore.collection("lists").doc(user.uid).collection("user_lists").add({
             listName: "",
@@ -43,6 +73,7 @@ export default function ShoppingLists(props) {
         })    
         setEditListName(true)
         setShowAddList(true)  
+        grabUserLists()
 
     }
 
@@ -61,8 +92,15 @@ export default function ShoppingLists(props) {
                     <Icon name="ios-create" size={25} color={Colors.defaultBlack}></Icon>
                 </TouchableOpacity>
             </View>
+            <View style={{borderWidth: .5, borderColor: Colors.gray, width: width*.9, alignSelf: "center"}}>
+                <FlatList 
+                    data={[]}
+                
+                />
+
+            </View>
             
-            <AddListModal editTitle={editListName} listData={[]} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
+            <ListModal editTitle={editListName} listData={[]} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
             
         </View> 
     );
@@ -77,11 +115,11 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 50,
         fontFamily: Fonts.default,
-        paddingLeft: 15
+        paddingLeft: 20
     }, 
     addNewButton: {
         paddingLeft: width*.55,
-        paddingTop: 25
+        paddingTop: 24
     },
     modal: {
         height: 80,

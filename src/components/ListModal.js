@@ -14,7 +14,9 @@ import DismissKeyboard from "../components/DimissKeyboard";
 import StaticTextBox from "../components/StaticTextBox"
 
 
-export default function AddListModal({editTitle, listID, listData, listName, show, onClosePressed}) {
+export default function ListModal({editTitle, listID, listData, listName, show, onClosePressed}) {
+
+    const itemData = [{name: "apple", id: 0}, {name: "pear", id: 1}, {name: "orange", id: 2}, {name: "grape", id: 3}, {name: "orange soda", id: 4}]
 
     const [searchString, setSearchString] = useState("")
     const [searching, setIsSearching] =  useState(false)
@@ -23,6 +25,9 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
     const [deleting, setDeleting] = useState(false)
     const [showTitleEdit, setShowTitleEdit] = useState(true)
     const [newListName, setNewListName] = useState("")
+    const [currentSearchResults, setCurrentSearchResults] = useState(itemData)
+
+    
 
     var user = firebase.auth().currentUser;
     var name, email, uid;
@@ -32,15 +37,15 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
         uid = user.uid;  
     }
 
-    function addItem() {
-
-        
+    function addItem(result) {        
         firestore.collection("lists").doc(user.uid).collection("user_lists").doc(listID).collection("items").add({
-            itemName: searchString,
+            itemName: result,
         }).then(docRef => {
-            var item = {name: searchString, id: docRef.id}
+            var item = {name: result, id: docRef.id}
             setListItems(listItems.concat(item))
         })
+
+        setCurrentSearchResults(itemData)
 
         setSearchString("")
     }
@@ -67,28 +72,46 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
     function closeModal() {
         updateListName()
         setListItems([])
+        setNewListName("")
         setSearchString("")
         onClosePressed()
         
     }
 
     function routeMe() {
+        updateListName()
         console.log("off to the next page")
     }
 
     function onNextPressed() {
-        setShowTitleEdit(!showTitleEdit)
+        if (newListName.length > 0) {
+            setShowTitleEdit(!showTitleEdit)
+        }
+    }
+
+    function updateListItems(string) {
+        setSearchString(string)
+
+        const validResults = itemData.filter(item => 
+            item.name.toLowerCase().startsWith(string.toLowerCase()) == true
+        )
+        setCurrentSearchResults(validResults)
     }
 
     useEffect(() => {
         setShowTitleEdit(editTitle)
     }, [editTitle])
 
+    useEffect(() => {
+        updateListItems(searchString)
+    }, [searchString])
+
+    
+
     function displayList() {
         return (
             <SwipeListView
                 showsVerticalScrollIndicator={false}
-
                 disableRightSwipe
                 data={listItems}
                 renderItem={({item}) => {
@@ -131,6 +154,37 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
         )
     }
 
+    
+
+    function dropDownComplete() {
+        return (
+            <FlatList 
+                data={currentSearchResults} 
+                renderItem={({item}) => {
+                    return (
+                        <View style={styles.dropDownItems}>
+                            <TouchableOpacity onPress={() => addItem(item.name)} style={{flexDirection: "row", alignItems: "center"}}>
+                                <Text style={{width: width*.6, fontFamily: Fonts.default, fontWeight: "100", fontSize: 15, marginLeft: 0 }}>{item.name}</Text>
+                                <Icon name={"ios-add"} style={{paddingLeft: width*.1}}size={30} color={Colors.defaultBlack} />
+
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }}
+                keyExtractor={item => item.id}
+                style={styles.dropDownComplete}
+                initialNumToRender={10}
+            />
+        )
+    }
+
+    function emptyView() {
+        return (
+            <View>
+
+            </View>
+        )
+    }
 
     
     return (
@@ -143,13 +197,15 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
                     <Modal
                         isVisible={showTitleEdit}
                         style={styles.titleModal}
+                        animationOut="fadeOut"
                     >
                             <View style={styles.textEntryView}>
                                 <TextInput
+                                    autoCapitalize="characters"
                                     autoCorrect = {false}
                                     style={styles.titleEntryField}
-                                    placeholder="list title" 
-                                    defaultValue={listName}
+                                    placeholder="Title" 
+                                    defaultValue={newListName}
                                     onChangeText={(text) => setNewListName(text)}
                                 />
                                 
@@ -165,11 +221,16 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
                 <View> 
                     <View style={styles.modalView}>
                         <View style={styles.searchBar}>
-                            <StaticTextBox placeholder="Add Item..." text={searchString} onChange={(string) => {setSearchString(string)}} onPress={() => addItem()}/>
+                            <StaticTextBox placeholder="Add Item..." text={searchString} onChange={(string) => {updateListItems(string)}} onPress={() => setSearchString("")}/>
                         </View>  
+                       
+                        <View style={{borderBottomEndRadius: 20, borderBottomStartRadius: 20, marginTop: 47, width: width*.85, backgroundColor: Colors.smoke, position: "absolute", zIndex: 1}}>
+                            {searchString.length > 0 ? dropDownComplete() : emptyView()}
+                        </View>
                         <View style={{paddingTop: 20, height: height*.65}}>
                             {displayList()}
                         </View>
+                        
                         <View style={styles.buttons}>
                             <View paddingLeft={10} marginTop={10}>
                                 <TouchableOpacity onPress={() => closeModal()}>
@@ -182,8 +243,11 @@ export default function AddListModal({editTitle, listID, listData, listName, sho
                                     <Text style={{fontFamily: Fonts.default, opacity: .8}}>ROUTE ME</Text>
                                 </Button>
                             </View>
-                            <View style={styles.deleteButton}>
-                                <Icon name={"ios-close"}  size={55} color={Colors.defaultBlack} />
+                            <View style={styles.editTitleButton}>
+                                <TouchableOpacity onPress={()=> setShowTitleEdit(!showTitleEdit)}>
+                                    <Icon name="ios-create" size={20} color={Colors.defaultBlack}></Icon>
+
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -206,6 +270,21 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         flexDirection: "row",
     }, 
+    dropDownItems: {
+        height: height*.065,
+        justifyContent: "flex-start",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: Colors.smoke,
+        borderColor: Colors.gray,
+        borderTopWidth: .3,
+    }, 
+    dropDownComplete: {
+        marginTop: 28,
+        marginLeft: 15,
+        marginRight: 15,
+        marginBottom: 10
+    },
     delete: {
         height: height*.065,
         borderRadius: 3,
@@ -230,15 +309,16 @@ const styles = StyleSheet.create({
         marginTop: 10, 
         borderRadius: 30,
     },
-    deleteButton: {
+    editTitleButton: {
         marginTop: 5, 
-        paddingLeft: 76,
+        paddingLeft: 77,
         paddingRight: 10
     },
     searchBar: {
         flex: .3,
         paddingTop: "8%",
-        marginBottom: 10
+        marginBottom: 10,
+        zIndex: 2
     }, 
     titleEntryField: {
         fontSize: 16, 
