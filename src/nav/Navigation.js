@@ -17,6 +17,11 @@ export default function MainStackNavigator() {
         <NavigationContainer>
             <Stack.Navigator name="ChatPlusNavigator">
                 <Stack.Screen 
+                    name="Login"
+                    component={Login}
+                    options={{headerShown:false}}
+                />
+                <Stack.Screen 
                     name="Register"
                     component={Register}
                     options={{headerShown:false}}
@@ -26,11 +31,7 @@ export default function MainStackNavigator() {
                     component={ShoppingLists}
                     options={{headerShown:false}}
                 />
-                 <Stack.Screen 
-                    name="Login"
-                    component={Login}
-                    options={{headerShown:false}}
-                />
+                 
                 <Stack.Screen 
                     name="TestMap"
                     component={SvgTest}

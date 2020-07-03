@@ -11,11 +11,14 @@ import Fonts from "../util/Fonts";
 
 import registerUser from "../actions/register";
 
-import firebase from "../db/Firebase";
+import firebase, {firestore} from "../db/Firebase";
 
 
 
 export default function Register(props) {
+
+    const date = new Date().toLocaleString()
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
@@ -67,10 +70,23 @@ export default function Register(props) {
                     user.updateProfile({
                         displayName: name
                       }).then((response) => {
-                        
-                        navigation.navigate("ShoppingLists")
+                        firestore.collection("lists").doc(user.uid).set({
+                            id: user.uid
+                        }).then(() => {
+                            firestore.collection("lists").doc(user.uid).collection("user_lists").add({
+                                listName: "ignore_this_document",
+                                date: date
+                            }).then(() => {
+                                navigation.navigate("ShoppingLists")
+                            }).catch(error=> {
+                                console.log("couldnt create user lists ")
+                            })
+                        }).catch(error=> {
+                            console.log("couldnt create list doc")
+                        })
                       }).catch(error => {
                         console.log("couldnt change name")
+                        console.log(user.uid)
                       })
                 }
             });

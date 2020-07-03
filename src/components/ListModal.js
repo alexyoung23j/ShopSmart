@@ -12,22 +12,25 @@ import Modal from 'react-native-modal';
 import DismissKeyboard from "../components/DimissKeyboard";
 
 import StaticTextBox from "../components/StaticTextBox"
+import { setLightEstimationEnabled } from 'expo/build/AR';
 
 
 export default function ListModal({editTitle, listID, listData, listName, show, onClosePressed}) {
 
+
     const itemData = [{name: "apple", id: 0}, {name: "pear", id: 1}, {name: "orange", id: 2}, {name: "grape", id: 3}, {name: "orange soda", id: 4}]
+    const date = new Date().toLocaleString()
+
+
 
     const [searchString, setSearchString] = useState("")
-    const [searching, setIsSearching] =  useState(false)
     const [listItems, setListItems] = useState(listData)
-    const [contacts, setContacts] = useState({})
     const [deleting, setDeleting] = useState(false)
     const [showTitleEdit, setShowTitleEdit] = useState(true)
-    const [newListName, setNewListName] = useState("")
+    const [newListName, setNewListName] = useState(listName)
+    const [currentListID, setCurrentListID] = useState(listID)
     const [currentSearchResults, setCurrentSearchResults] = useState(itemData)
 
-    
 
     var user = firebase.auth().currentUser;
     var name, email, uid;
@@ -37,8 +40,21 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
         uid = user.uid;  
     }
 
+
+    function createList() {
+
+        firestore.collection("lists").doc(user.uid).collection("user_lists").add({
+            listName: newListName,
+            date:date
+        }).then(docRef => {
+            setCurrentListID(docRef.id)
+        })
+        
+
+    }
+
     function addItem(result) {        
-        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(listID).collection("items").add({
+        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).collection("items").add({
             itemName: result,
         }).then(docRef => {
             var item = {name: result, id: docRef.id}
@@ -59,18 +75,18 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
         }
         setDeleting(!deleting)
 
-        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(listID).collection("items").doc(item.id).delete()
+        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).collection("items").doc(item.id).delete()
 
     }
 
     function updateListName() {
-        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(listID).set({
+        firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).set({
             listName: newListName,
         })
     }
 
     function closeModal() {
-        updateListName()
+        setCurrentListID("")
         setListItems([])
         setNewListName("")
         setSearchString("")
@@ -84,7 +100,12 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
     }
 
     function onNextPressed() {
+        
         if (newListName.length > 0) {
+            if (currentListID == "") {
+                createList()
+            }
+            
             setShowTitleEdit(!showTitleEdit)
         }
     }
@@ -105,6 +126,10 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
     useEffect(() => {
         updateListItems(searchString)
     }, [searchString])
+
+    useEffect(() => {
+        setCurrentListID(listID)
+    }, [listID])
 
     
 
@@ -201,11 +226,11 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                     >
                             <View style={styles.textEntryView}>
                                 <TextInput
-                                    autoCapitalize="characters"
+                                    autoCapitalize="words"
                                     autoCorrect = {false}
                                     style={styles.titleEntryField}
                                     placeholder="Title" 
-                                    defaultValue={newListName}
+                                    value={newListName}
                                     onChangeText={(text) => setNewListName(text)}
                                 />
                                 

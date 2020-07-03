@@ -59,7 +59,7 @@ export default function Login(props) {
 
         if (noErrors) {
             firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
-                //navigation.navigate("Home")
+                navigation.navigate("ShoppingLists")
             }
             ).catch(error =>{
                 Alert.alert(error.message);
@@ -98,6 +98,11 @@ export default function Login(props) {
                             </Button>
                         </View>
                     </View>
+                </View>
+                <View>
+                    <Button onPress={() => navigation.navigate("Register")}>
+                        <Text>Register</Text>
+                    </Button>
                 </View>
             </KeyboardAvoidingView>
         </View>
