@@ -45,17 +45,17 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
 
         firestore.collection("lists").doc(user.uid).collection("user_lists").add({
             listName: newListName,
-            date:date
+            date: date
         }).then(docRef => {
             setCurrentListID(docRef.id)
         })
-        
-
     }
+
 
     function addItem(result) {        
         firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).collection("items").add({
             itemName: result,
+            date: date
         }).then(docRef => {
             var item = {name: result, id: docRef.id}
             setListItems(listItems.concat(item))
@@ -82,6 +82,7 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
     function updateListName() {
         firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).set({
             listName: newListName,
+            date: date
         })
     }
 
@@ -104,6 +105,8 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
         if (newListName.length > 0) {
             if (currentListID == "") {
                 createList()
+            } else {
+                updateListName()
             }
             
             setShowTitleEdit(!showTitleEdit)
@@ -130,6 +133,14 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
     useEffect(() => {
         setCurrentListID(listID)
     }, [listID])
+
+    useEffect(() => {
+        setNewListName(listName)
+    }, [listName])
+
+    useEffect(() => {
+        setListItems(listData)
+    }, [listData])
 
     
 
@@ -230,10 +241,10 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                                     autoCorrect = {false}
                                     style={styles.titleEntryField}
                                     placeholder="Title" 
-                                    value={newListName}
+                                    defaultValue={newListName}
                                     onChangeText={(text) => setNewListName(text)}
+                                    maxLength = {10}
                                 />
-                                
                             </View>
                             <View style={styles.saveTitle}>
                                 <TouchableOpacity onPress={() => {onNextPressed()}}>
@@ -248,7 +259,7 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                         <View style={styles.searchBar}>
                             <StaticTextBox placeholder="Add Item..." text={searchString} onChange={(string) => {updateListItems(string)}} onPress={() => setSearchString("")}/>
                         </View>  
-                       
+                        
                         <View style={{borderBottomEndRadius: 20, borderBottomStartRadius: 20, marginTop: 47, width: width*.85, backgroundColor: Colors.smoke, position: "absolute", zIndex: 1}}>
                             {searchString.length > 0 ? dropDownComplete() : emptyView()}
                         </View>
@@ -271,7 +282,6 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                             <View style={styles.editTitleButton}>
                                 <TouchableOpacity onPress={()=> setShowTitleEdit(!showTitleEdit)}>
                                     <Icon name="ios-create" size={20} color={Colors.defaultBlack}></Icon>
-
                                 </TouchableOpacity>
                             </View>
                         </View>

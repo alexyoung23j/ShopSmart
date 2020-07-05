@@ -15,19 +15,19 @@ export default function SvgTest() {
 
     return (
         <View style={{overflow: "hidden"}}>
-            <View style={{flex:.5, paddingBottom: "20%", backgroundColor: "#808080"}}>
+            <View style={{flex:.1, paddingBottom: "20%", backgroundColor: "#808080"}}>
                 <Text>
                     Hello
                 </Text>
             </View>  
-            <View style={{overflow: "hidden", width: "100%", height: "70%", paddingBottom: "20%"}}>  
+            <View style={{overflow: "hidden", width: "100%", height: "90%", paddingBottom: "20%"}}>  
                 <SvgPanZoom
                     canvasHeight  = {2244}
                     canvasWidth   = {3174}
                     minScale      = {.1}
-                    initialZoom   = {.1}
-                    onZoom        = {(zoom) => {  }}
-                    //canvasStyle   = {{ backgroundColor: 'yellow' }}
+                    initialZoom   = {.5}
+                    onZoom        = {(zoom) => { console.log("yo") }}
+                    canvasStyle   = {{ backgroundColor: 'yellow' }}
                     //style={{height: "10%", paddingBottom: "10%", flex:1}}
                     >
                             <Image
@@ -46,7 +46,7 @@ export default function SvgTest() {
 
                                     delay={100}
                                     d='M 1480 2080 L 1470 2010 L 1420 2010 L 1400 2000 L 1390 1990 L 1120 1980 L 1120 1960 L 870 1960 L 870 1630 L 850 1630 L 850 660 L 850 370 L 840 250 L 280 250 L 280 280 L 270 360 L 260 370'
-                                    loop={false}
+                                    loop={true}
                             /> 
 
                             <AnimatedSVGPath
@@ -67,7 +67,7 @@ export default function SvgTest() {
 
                 </SvgPanZoom>
             </View>     
-            <View>
+            <View style={{ backgroundColor: "#808080"}}>
                 <Button title="Yo" onPress={() => console.log("yoyo")}></Button>
             </View>
     </View>

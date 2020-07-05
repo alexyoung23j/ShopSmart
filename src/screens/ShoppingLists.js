@@ -1,6 +1,6 @@
 import React, {useState, isValidElement, useEffect } from 'react';
 import { Form, Input, Item, Label, Button, Card, CheckBox } from 'native-base';
-import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert, FlatList, ListViewBase } from 'react-native';
 import CircleCheckBox, {LABEL_POSITION} from 'react-native-circle-checkbox';  
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
@@ -52,18 +52,10 @@ export default function ShoppingLists(props) {
     const [newListID, setNewListID] = useState("")
     const [editListName, setEditListName] = useState(false)
     const [deleting, setDeleting] = useState(false)
-
-
     const [userLists, setUserLists] = useState(grabbedLists)
+    const [currentListData, setCurrentListData] = useState([])
 
-    var user = firebase.auth().currentUser;
-    var name, email, uid;
-
-    if (user != null) {
-        name = user.displayName;
-        email = user.email;
-        uid = user.uid;   
-    }
+    
     async function grabUserLists() {
 
         var grabbedLists = []
@@ -118,12 +110,98 @@ export default function ShoppingLists(props) {
 
     }
 
+    async function grabListItems(id) {
+        var grabbedListItems = []
+
+        const listItemsRef = firestore.collection("lists").doc(user.uid).collection("user_lists").doc(id).collection("items").orderBy("date");
+        listItemsRef.get().then((snapshot) => {
+            snapshot.forEach(doc => {
+                const itemName = doc.get("itemName")
+                const docID = doc.id
+                grabbedListItems.push({name:itemName, id:docID})
+            })
+            setCurrentListData(grabbedListItems)
+        });
+        
+    }
+
     function selectList(list) {
         setCurrentListName(list.name)
         setEditListName(false)
         setNewListID(list.id)
-        setShowAddList(true)
+        grabListItems(list.id).then(() => {
+            setShowAddList(true)
+        })
+    }
 
+    function routeList(list) {
+        console.log(list)
+        navigation.navigate("TestMap")
+    }
+
+    function addNewListNote() {
+        return (
+            <View style={{alignItems: "center"}}>
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>add a list!</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>swipe left to delete lists</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>swipe right for quick route</Text>  
+            </View>
+        )
+    }
+
+    function ListViews() {
+        return (
+            <SwipeListView
+                showsVerticalScrollIndicator={false}
+                
+                data={userLists.filter(list => list.name != "ignore_this_document").reverse()}
+                renderItem={({item}) => {
+                    return (
+                            <View style={{flexDirection: "row", alignItems: "center", paddingBottom: "3%", borderRadius: 10, backgroundColor: Colors.smoke,}}>
+                                <Text style={{fontFamily: Fonts.default, fontWeight: "100", fontSize: 25, paddingLeft: 3}}>{item.name}</Text>
+                                <View style={{flexDirection: "row", justifyContent: "flex-end", flex:8, alignItems: "center", marginTop: 2}}>
+                                    <Text style={{fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 15, paddingRight: 105}}>{item.date}</Text>  
+                                    <TouchableOpacity style={{paddingRight: 10}} onPress={() => selectList(item)}>
+                                        <Icon name="ios-arrow-forward" size={35} color={Colors.defaultBlack}></Icon>
+                                    </TouchableOpacity>
+                                </View>
+                                
+                            </View>
+                    )
+                }}
+                renderHiddenItem={(list) => {
+                    return (
+                        <View style={{flexDirection: "row", flexGrow:1}}>
+                            <View style={{flexDirection: "row", alignItems: "center", borderRadius: 11, justifyContent: "flex-start",  flex: 1, backgroundColor: Colors.darkGreen}}>
+                                <TouchableOpacity onPress={() => routeList(list.item)} style={{alignSelf: "flex-start"}}>
+                                    <Text style={{fontFamily: Fonts.default, fontWeight: "100", fontSize: 20, paddingLeft: 20, opacity: .5}}>route</Text>  
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{flexDirection: "row", alignItems: "center", borderRadius: 11, justifyContent: "flex-end",  flex: 1, backgroundColor: Colors.deleteRed}}>
+                                <TouchableOpacity onPress={() => deleteList(list.item)} style={{alignSelf: "flex-end"}}>
+                                    <Text style={{fontFamily: Fonts.default, fontWeight: "100", fontSize: 15, paddingRight: 10, opacity: .5}}>delete</Text>  
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        
+                    )
+                    
+                }}
+                
+                style={styles.listsView} 
+                showsHorizontalScrollIndicator={false}
+                rightOpenValue={-65}
+                leftOpenValue={85}
+
+                keyExtractor={list => list.id}
+                contentContainerStyle={{
+                    flexGrow: 1,
+                    
+                }}
+                extraData={deleting}
+            
+            />
+        )
     }
  
    return (
@@ -135,58 +213,12 @@ export default function ShoppingLists(props) {
                     <Icon name="ios-create" size={25} color={Colors.defaultBlack}></Icon>
                 </TouchableOpacity>
             </View>
-            
             <View style={{width: width*.88, alignSelf: "center", height: height*.001, paddingBottom: 5, borderTopColor: Colors.gray, borderTopWidth: .5}}>
-
             </View>
             <View style={{width: width*.88, alignSelf: "center"}}>
-                <SwipeListView
-                    showsVerticalScrollIndicator={false}
-                    disableRightSwipe
-                    data={userLists.filter(list => list.name != "ignore_this_document").reverse()}
-                    renderItem={({item}) => {
-                        return (
-                                <View style={{flexDirection: "row", alignItems: "center", paddingBottom: "3%", borderRadius: 10, backgroundColor: Colors.smoke}}>
-                                    <Text style={{fontFamily: Fonts.default, fontWeight: "100", fontSize: 25, paddingLeft: 3}}>{item.name}</Text>
-                                   
-
-                                    <View style={{ flexDirection: "row", justifyContent: "flex-end", flex:8, alignItems: "center"}}>
-                                        <Text style={{fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 15, paddingRight: 130}}>{item.date}</Text>  
-                                        <TouchableOpacity style={{paddingRight: 10}} onPress={() => selectList(item)}>
-                                            <Icon name="ios-arrow-forward" size={35} color={Colors.defaultBlack}></Icon>
-                                        </TouchableOpacity>
-                                    </View>
-                                    
-                                </View>
-                        )
-                    }}
-                    renderHiddenItem={(list) => {
-                        return (
-                            <View style={{flexDirection: "row", alignItems: "center", borderRadius: 11, justifyContent: "flex-end",  flex: 1, backgroundColor: Colors.deleteRed}}>
-                                <TouchableOpacity onPress={() => deleteList(list.item)} style={{alignSelf: "flex-end"}}>
-                                    <Text style={{fontFamily: Fonts.default, fontWeight: "100", fontSize: 15, paddingRight: 10, opacity: .5}}>delete</Text>  
-                                </TouchableOpacity>
-                            </View>
-                        )
-                        
-                    }}
-                    
-                    style={styles.listsView} 
-                    showsHorizontalScrollIndicator={false}
-                    rightOpenValue={-65}
-                    keyExtractor={list => list.id}
-                    contentContainerStyle={{
-                        flexGrow: 1,
-                        
-                    }}
-                    extraData={deleting}
-                    
-                    
-                />
-
+                { userLists.length > 1 ? ListViews() : addNewListNote() } 
             </View>
-            
-            <ListModal editTitle={editListName} listData={[]} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
+            <ListModal editTitle={editListName} listData={currentListData} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
             
         </View> 
     );
