@@ -18,7 +18,7 @@ import { setLightEstimationEnabled } from 'expo/build/AR';
 export default function ListModal({editTitle, listID, listData, listName, show, onClosePressed}) {
 
 
-    const itemData = [{name: "apple", id: 0}, {name: "pear", id: 1}, {name: "orange", id: 2}, {name: "grape", id: 3}, {name: "orange soda", id: 4}]
+    const itemData = require("../stores/categories.json")
     const date = new Date().toLocaleString()
 
 
@@ -52,12 +52,14 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
     }
 
 
-    function addItem(result) {        
+    function addItem(name, category, categoryID) {  
         firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).collection("items").add({
-            itemName: result,
-            date: date
+            itemName: name,
+            date: date, 
+            category: category, 
+            categoryID: categoryID
         }).then(docRef => {
-            var item = {name: result, id: docRef.id}
+            var item = {name: name, id: docRef.id, category: category, categoryID: categoryID}
             setListItems(listItems.concat(item))
         })
 
@@ -153,8 +155,9 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                 renderItem={({item}) => {
                     return (
                         <View style={styles.item}>
-                            <View style={{flex:8, justifyContent: 'center', alignItems: 'flex-start' }}>
-                                <Text style={{fontFamily: Fonts.default, fontSize: 20, marginLeft: 15 }}>{item.name}</Text>
+                            <View style={{flex:8,flexDirection: "row", alignContent: "center", justifyContent: 'flex-start', alignSelf: "center", alignItems: 'flex-start' }}>
+                                <Text style={{width: width*.35, fontFamily: Fonts.default, fontSize: 20, marginLeft: 15 }}>{item.name}</Text>
+                                <Text style={{fontFamily: Fonts.default, fontStyle: "italic", fontSize: 15, marginLeft: 30, paddingTop: 3}}>{item.category}</Text>
                             </View>
                         </View>
                     )
@@ -199,9 +202,12 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                 renderItem={({item}) => {
                     return (
                         <View style={styles.dropDownItems}>
-                            <TouchableOpacity onPress={() => addItem(item.name)} style={{flexDirection: "row", alignItems: "center"}}>
-                                <Text style={{width: width*.6, fontFamily: Fonts.default, fontWeight: "100", fontSize: 15, marginLeft: 0 }}>{item.name}</Text>
-                                <Icon name={"ios-add"} style={{paddingLeft: width*.1}}size={30} color={Colors.defaultBlack} />
+                            <TouchableOpacity onPress={() => addItem(item.name, item.category, item.categoryID)} style={{flexDirection: "row", alignItems: "center", flexGrow: 1}}>
+                                <Text style={{width: width*.4, fontFamily: Fonts.default, fontWeight: "100", fontSize: 15, marginLeft: 0 }}>{item.name}</Text>
+                                <Text style={{width: width*.3, fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "100", fontSize: 13, marginLeft: 0 }}>{item.category}</Text>
+                                <View style={{width: width*.2,}}>
+                                    <Icon name={"ios-add"} size={30} color={Colors.defaultBlack} />
+                                </View>
 
                             </TouchableOpacity>
                         </View>

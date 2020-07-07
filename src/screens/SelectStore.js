@@ -25,12 +25,10 @@ import { set } from 'react-native-reanimated';
 
 
 
-export default function SelectStore({navigation}) {
+export default function SelectStore({route, navigation }) {
 
-    //const { listItems } = listInfo.listItems;
-    //const {listName} = listInfo.listName;
-
-    listItems = [{name: "milk", id: "adfafasfda", category: "milk", categoryID: 66}]
+    const { listItems } = route.params;
+    const {listName} = route.params;
 
     const [pathArray, setPathArray] = useState([])
     const [nodeOrder, setNodeOrder] = useState([])
@@ -43,6 +41,7 @@ export default function SelectStore({navigation}) {
         const arr = createPath(listItems)
         setPathArray(arr[0])
         setNodeOrder(arr[1])
+        console.log("listItems: ",listItems)
     }
 
     function createNodes() {

@@ -118,7 +118,9 @@ export default function ShoppingLists(props) {
             snapshot.forEach(doc => {
                 const itemName = doc.get("itemName")
                 const docID = doc.id
-                grabbedListItems.push({name:itemName, id:docID})
+                const category = doc.get("category")
+                const categoryID = doc.get("categoryID")
+                grabbedListItems.push({name:itemName, id:docID, category: category, categoryID: categoryID})
             })
             setCurrentListData(grabbedListItems)
         });
@@ -136,7 +138,16 @@ export default function ShoppingLists(props) {
 
     function routeList(list) {
         console.log(list)
-        navigation.navigate("TestMap")
+        setCurrentListName(list.name)
+        setNewListID(list.id)
+        grabListItems(list.id).then(() => {
+            console.log("current", currentListData)
+            navigation.navigate("SelectStore", {
+                listItems: currentListData, 
+                listName: currentListName
+            })
+        })
+        
     }
 
     function addNewListNote() {
