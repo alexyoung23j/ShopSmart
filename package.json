@@ -21,6 +21,7 @@
     "react-native-circle-checkbox": "^0.1.6",
     "react-native-dropdown-autocomplete": "^1.0.18",
     "react-native-dropdown-autocomplete-textinput": "^1.0.1",
+    "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-modal": "^11.5.6",
     "react-native-reanimated": "^1.7.1",

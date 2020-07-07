@@ -6,6 +6,7 @@ import SvgTest from "../screens/svgTest";
 import Register from "../screens/Register";
 import Login from "../screens/Login";
 import ShoppingLists from "../screens/ShoppingLists"
+import SelectStore from "../screens/SelectStore"
 
 
 
@@ -16,7 +17,7 @@ export default function MainStackNavigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator name="ChatPlusNavigator">
-                <Stack.Screen 
+               {/*  <Stack.Screen 
                     name="Login"
                     component={Login}
                     options={{headerShown:false}}
@@ -30,11 +31,11 @@ export default function MainStackNavigator() {
                     name="ShoppingLists"
                     component={ShoppingLists}
                     options={{headerShown:false}}
-                />
+                /> */}
                  
                 <Stack.Screen 
-                    name="TestMap"
-                    component={SvgTest}
+                    name="SelectStore"
+                    component={SelectStore}
                     options={{headerShown:false}}
                 />
                 
