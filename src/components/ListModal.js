@@ -15,7 +15,7 @@ import StaticTextBox from "../components/StaticTextBox"
 import { setLightEstimationEnabled } from 'expo/build/AR';
 
 
-export default function ListModal({editTitle, listID, listData, listName, show, onClosePressed}) {
+export default function ListModal({editTitle, listID, listData, listName, show, onClosePressed, navigation}) {
 
 
     const itemData = require("../stores/categories.json")
@@ -97,8 +97,33 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
         
     }
 
+    function routeList() {
+        var grabbedListItems = []
+        const listItemsRef = firestore.collection("lists").doc(user.uid).collection("user_lists").doc(currentListID).collection("items").orderBy("date");
+        listItemsRef.get().then((snapshot) => {
+            snapshot.forEach(doc => {
+                const itemName = doc.get("itemName")
+                const docID = doc.id
+                const category = doc.get("category")
+                const categoryID = doc.get("categoryID")
+                grabbedListItems.push({name:itemName, id:docID, category: category, categoryID: categoryID})
+            })
+            console.log("current", grabbedListItems)
+            closeModal()
+            navigation.navigate("SelectStore", {
+                listItems: grabbedListItems, 
+                listName: newListName
+            })
+            onClosePressed()
+
+        });
+    }
+
     function routeMe() {
         updateListName()
+        closeModal()
+        onRoutePressed()
+
         console.log("off to the next page")
     }
 
@@ -281,7 +306,7 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
                             </View>
                             
                             <View style={styles.routeButton}>
-                                <Button style={{ width: width*.35, borderRadius: 30, justifyContent: "center", backgroundColor: Colors.darkGreen}} onPress={() => routeMe()}>
+                                <Button style={{ width: width*.35, borderRadius: 30, justifyContent: "center", backgroundColor: Colors.darkGreen}} onPress={() => routeList()}>
                                     <Text style={{fontFamily: Fonts.default, opacity: .8}}>ROUTE ME</Text>
                                 </Button>
                             </View>

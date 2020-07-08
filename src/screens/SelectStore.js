@@ -41,9 +41,21 @@ export default function SelectStore({route, navigation }) {
     const [currentNodes, setCurrentNodes] = useState([])
     const [searchString, setSearchString] = useState("")
     const [chosen, setChosen] = useState(false)
+    const [buttonColor, setButtonColor] = useState(Colors.lightGray)
+    const [buttonText, setButtonText] = useState("")
 
     const store = require("../stores/vons.json")
     const nodeData = store.nodes
+
+    function goPressed() {
+        navigation.navigate("MapScreen", {
+            pathArray: pathArray,
+            nodes: currentNodes,
+            nodeOrder: nodeOrder,
+            listName: listName
+            
+        })
+    }
 
     function parseNodes(items) {
 
@@ -88,11 +100,7 @@ export default function SelectStore({route, navigation }) {
 
     }
 
-    function goPressed() {
-        navigation.navigate("SvgTest", {
-            pathArray: pathArray,
-        })
-    }
+    
 
     useEffect(() => {
         createPathArray()
@@ -109,7 +117,7 @@ export default function SelectStore({route, navigation }) {
                 renderItem={({item}) => {
                     return (
                         <View style={styles.dropDownItems}>
-                            <TouchableOpacity onPress={() => {setSearchString(""); setChosen(true)}} style={{borderRadius: 10, flexDirection: "row", alignItems: "center", flexGrow: 1, }}>
+                            <TouchableOpacity onPress={() => {setButtonColor(Colors.darkGreen); setButtonText("GO"); setSearchString(""); setChosen(true)}} style={{borderRadius: 10, flexDirection: "row", alignItems: "center", flexGrow: 1, }}>
                                 <Text style={{width: width*.25, fontFamily: Fonts.default, fontWeight: "100", fontSize: 20, marginLeft: 0 }}>  {item.name}</Text>
                                 <Text style={{width: width*.44, fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "100", fontSize: 16, marginLeft: 0 }}>{item.address}</Text>
                                 <Text style={{fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "100", fontSize: 16, marginLeft: 0 }}>{item.state}  </Text>
@@ -177,8 +185,8 @@ export default function SelectStore({route, navigation }) {
                 { chosen == true ? showStore() : emptyView2()}
             </View>
             <View style={styles.routeButton}>
-                <Button style={{ width: width*.45, borderRadius: 30, justifyContent: "center", backgroundColor: Colors.darkGreen}} onPress={() => {goPressed()}}>
-                    <Text style={{fontFamily: Fonts.default}}>GO</Text>
+                <Button style={{ width: width*.45, borderRadius: 30, justifyContent: "center", backgroundColor: buttonColor}} onPress={() => {goPressed()}}>
+                    <Text style={{fontFamily: Fonts.default}}>{buttonText}</Text>
                 </Button>
             </View>
 
@@ -199,7 +207,7 @@ let { height, width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: Colors.smoke,
+        backgroundColor: Colors.lightGray,
         height: height*.07,
         borderRadius: 10,
         marginTop: 150,

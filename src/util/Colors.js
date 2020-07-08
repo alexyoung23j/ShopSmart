@@ -13,7 +13,10 @@ const Colors = {
     indianRed: "#CD5C5C",
     imperial: "#ED2939",
     deleteRed: "#FF0000",
-    darkGreen: "#006400"
+    darkGreen: "#006400", 
+    gainsboro: "#DCDCDC",
+    lighterGray: "#D3D3D30",
+    darkGray: "#505050"
 }
 
 export default Colors;

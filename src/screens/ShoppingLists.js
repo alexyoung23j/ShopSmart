@@ -159,9 +159,8 @@ export default function ShoppingLists(props) {
                 listName: currentListName
             })
         });
-
-        
     }
+
 
     function addNewListNote() {
         return (
@@ -242,7 +241,7 @@ export default function ShoppingLists(props) {
             <View style={{width: width*.88, alignSelf: "center"}}>
                 { userLists.length > 1 ? ListViews() : addNewListNote() } 
             </View>
-            <ListModal editTitle={editListName} listData={currentListData} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
+            <ListModal navigation={navigation} editTitle={editListName} listData={currentListData} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
             
         </View> 
     );

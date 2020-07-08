@@ -11,29 +11,31 @@ import MapSvg from "../maps/Map2.svg"
 export default function SvgTest({route, props}) {
 
     const { pathArray } = route.params;
+    const zoomRef = useRef(null)
+
+
 
     const map = require('../maps/VonsMap.png')
     const [currentPath, setCurrentPath] = useState(pathArray[1])
 
     function setPath() {
-        setCurrentPath(pathArray[1])
+        setCurrentPath(pathArray[0])
     }
 
     useEffect(() => {
+        doIt()
         setPath()
     }, [])
     
-    const zoomRef = useRef(null)
 
     function doIt() {
-        zoomRef.current.zoomToPoint(546, 2222, 1)
+        setTimeout(() => {
+            zoomRef.current.zoomToPoint(555, 1900, .5)
+        }, 500)
+        
     }
     
 
-   /*  useEffect(() => {
-        doIt()
-    }, [])
- */
 
     return (
         <View style={{overflow: "hidden"}}>
