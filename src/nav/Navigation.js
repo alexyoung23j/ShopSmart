@@ -38,6 +38,14 @@ export default function MainStackNavigator() {
                     component={SelectStore}
                     options={{headerShown:false}}
                 />
+
+                <Stack.Screen 
+                    name="SvgTest"
+                    component={SvgTest}
+                    options={{headerShown:false}}
+                />
+
+
                 
                 
             </Stack.Navigator>

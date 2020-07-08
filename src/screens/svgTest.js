@@ -8,9 +8,20 @@ import Test from "../maps/test.svg"
 import MapSvg from "../maps/Map2.svg"
 
 
-export default function SvgTest() {
+export default function SvgTest({route, props}) {
 
-    const map = require('../maps/VonsMapTest1.png')
+    const { pathArray } = route.params;
+
+    const map = require('../maps/VonsMap.png')
+    const [currentPath, setCurrentPath] = useState(pathArray[1])
+
+    function setPath() {
+        setCurrentPath(pathArray[1])
+    }
+
+    useEffect(() => {
+        setPath()
+    }, [])
     
     const zoomRef = useRef(null)
 
@@ -54,7 +65,7 @@ export default function SvgTest() {
                                     scale={1}
 
                                     delay={100}
-                                    d="M 2140 1370 L 2140 1100 L 2130 1090 L 2120 1060 L 2110 1050 L 2100 730 L 2090 280 L 1960 270 L 1940 280 L 1880 270 L 1870 260 L 1430 250 L 1420 240 L 1410 230 L 1400 220 L 1260 210 L 1250 200 L 1230 190 L 1220 180 L 1210 170 L 1200 160"
+                                    d={currentPath}
                                     loop={false}
                             />  
 

@@ -55,6 +55,8 @@ export default function ShoppingLists(props) {
     const [userLists, setUserLists] = useState(grabbedLists)
     const [currentListData, setCurrentListData] = useState([])
 
+
+   
     
     async function grabUserLists() {
 
@@ -88,6 +90,8 @@ export default function ShoppingLists(props) {
     useEffect(() => {
         grabUserLists()
     }, [])
+
+    
 
     
 
@@ -137,16 +141,25 @@ export default function ShoppingLists(props) {
     }
 
     function routeList(list) {
-        console.log(list)
         setCurrentListName(list.name)
         setNewListID(list.id)
-        grabListItems(list.id).then(() => {
-            console.log("current", currentListData)
+        var grabbedListItems = []
+        const listItemsRef = firestore.collection("lists").doc(user.uid).collection("user_lists").doc(list.id).collection("items").orderBy("date");
+        listItemsRef.get().then((snapshot) => {
+            snapshot.forEach(doc => {
+                const itemName = doc.get("itemName")
+                const docID = doc.id
+                const category = doc.get("category")
+                const categoryID = doc.get("categoryID")
+                grabbedListItems.push({name:itemName, id:docID, category: category, categoryID: categoryID})
+            })
+            console.log("current", grabbedListItems)
             navigation.navigate("SelectStore", {
-                listItems: currentListData, 
+                listItems: grabbedListItems, 
                 listName: currentListName
             })
-        })
+        });
+
         
     }
 

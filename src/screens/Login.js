@@ -100,10 +100,11 @@ export default function Login(props) {
                     </View>
                 </View>
                 <View>
-                    <Button onPress={() => navigation.navigate("Register")}>
-                        <Text>Register</Text>
-                    </Button>
+                    <TouchableOpacity style={{paddingTop: "5%"}}onPress={() => navigation.navigate("Register")}>
+                        <Text style={styles.button}>sign up</Text>
+                    </TouchableOpacity>
                 </View>
+                
             </KeyboardAvoidingView>
         </View>
         </DimissKeyboard>

@@ -123,20 +123,18 @@ function generatePath(nodes, paths, costs, targets) {
 
 }
 
-generatePath(store_nodes, store_paths, store_costs, [0, 3, 4])
 
 
 
 
-
-export default  function createPath(listItems) {    
+export default function createPath(visitedNodes) {    
     nodes = new Array()
 
     // Always include the entrance
     nodes.push(0)
 
-    for (i = 0; i<listItems.length; i++) {
-        nodes.push(listItems[i].categoryID)
+    for (i = 0; i<visitedNodes.length; i++) {
+        nodes.push(visitedNodes[i])
     }
 
     return generatePath(store_nodes, store_paths, store_costs, nodes)
