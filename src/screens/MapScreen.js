@@ -4,12 +4,13 @@ import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, Im
 import CircleCheckBox, {LABEL_POSITION} from 'react-native-circle-checkbox';  
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
-import { Svg, Rect, Path, Line, Circle, Image } from 'react-native-svg';
+import { Svg, Rect, Path, Line, Circle, Image, G, Polyline } from 'react-native-svg';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 import StaticTextBox from "../components/StaticTextBox"
 
 import Modal from 'react-native-modal';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 
 import FloatingTextBox from "../components/FloatingTextBox"
@@ -32,39 +33,64 @@ import { AnimatedSVGPath } from 'react-native-svg-animations';
 import SvgPanZoom, { SvgPanZoomElement } from 'react-native-svg-pan-zoom';
 
 
-export default function MapScreen({route, props}) {
+export default function MapScreen({route, navigation}) {
 
     const { pathArray } = route.params;
     const { nodes } = route.params;
     const { nodeOrder } = route.params
     const { listName } = route.params;
 
-
     const store = require("../stores/vons.json")
     const nodeData = store.nodes
     const zoomRef = useRef(null)
 
-    const [currentTargetNode, setCurrentTargetNode] = useState(nodes[0])
+    const [currentTargetNode, setCurrentTargetNode] = useState(nodes[1])
+    const [currentTargetNodeInfo, setCurrentTargetNodeInfo] = useState(nodes[1])
+    const [pointerCoordinates, setPointerCoordinates] = useState([551, 2220])
+    const [targetCoordinates, setTargetCoordinates] = useState([])
     const [targetNodeIdx, setTargetNodeIdx] = useState(1)
     const [zoomFocus, setZoomFocus] = useState([555, 2220])
-    const [currentPath, setCurrentPath] = useState(pathArray[1])
-    const [currentDrawPath, setCurrentDrawPath] = useState(pathArray[1])
+    const [currentPath, setCurrentPath] = useState("M 555 2220")
     const [erasePath, setErasePath] = useState("M 555 2220")
 
     const map = require('../maps/VonsMap.png')
+    const cart = require("../maps/cart.png")
+    const arrow = require("../maps/arrow.png")
 
+    
     function setPath() {
         setCurrentPath(pathArray[0])
+        const targetNodeID = nodeOrder[targetNodeIdx]
+        const targetNodeData = nodeData[targetNodeID]
+        setTargetCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+    }
+  //  console.log(nodes)
+
+    function onNextPressed() {
+        if (targetNodeIdx < nodeOrder.length) {
+            moveToNextNode()
+        } else {
+            console.log("too many!")
+        }
     }
 
     function moveToNextNode() {
         const targetNodeID = nodeOrder[targetNodeIdx]
         const targetNodeData = nodeData[targetNodeID]
 
-        setTargetNodeIdx((targetNodeIdx + 1) % nodeOrder.length)
-        setCurrentTargetNode(nodes.find((node) => {return node.key == targetNodeID}))
+        setCurrentTargetNode(nodes[targetNodeIdx+1])
+
+        setTargetNodeIdx((targetNodeIdx + 1))
+       
         setErasePath(currentPath)
         setZoomFocus([targetNodeData.x * 10, targetNodeData.y * 10])
+        setPointerCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+
+
+
+        setTimeout(() => {
+            setCurrentTargetNodeInfo(nodes[targetNodeIdx+1])
+        }, 4500)
 
 
     }
@@ -75,22 +101,16 @@ export default function MapScreen({route, props}) {
         setCurrentPath("M 0 0")
         setTimeout(() => {
             zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*2, .25, 1500)
-        }, 500)
+        }, 1000)
         setTimeout(() => {
-            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*1, .45, 1500)
+            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*.8, .45, 1500)
         }, 3000)
 
-
-        
         setTimeout(()=> {
-            setCurrentDrawPath(pathArray[targetNodeIdx-1])
             setErasePath("M 0 0")
-        }, 2500)
-
-        setTimeout(()=> {
-            setCurrentDrawPath("M 0 0")
             setCurrentPath(pathArray[targetNodeIdx-1])
-        }, 6000)
+
+        }, 4500)
 
         
     }
@@ -104,28 +124,11 @@ export default function MapScreen({route, props}) {
         zoomFit()
     }, [zoomFocus])
     
-    function drawPath() {
-        return (
-            <AnimatedSVGPath
-                strokeColor={"green"}
-                duration={3000}
-                strokeWidth={20}
-                zIndex={2}
-                height={2244}
-                width={3174}
-                scale={1}
-
-                delay={40}
-                d={currentDrawPath}
-                loop={true}
-            />  
-        
-        )
-    }
+    
     function basePath() {
         return (
                 <AnimatedSVGPath
-                    strokeColor={"green"}
+                    strokeColor={Colors.darkGreen}
                     duration={3000}
                     strokeWidth={20}
                     zIndex={2}
@@ -159,12 +162,45 @@ export default function MapScreen({route, props}) {
         )
     }
 
+    function headerText() {
+        if (targetNodeIdx >= nodeOrder.length) {
+            return (
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <View style={{marginLeft: 20}}>
+                        <Icon name="ios-checkmark-circle" size={35} color={Colors.smoke}></Icon>
+                    </View>
+                    <View style={{flexGrow: .6, alignItems: "center", flexDirection: "row"}}>
+                        <Text style={{paddingLeft: "8%", fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "400", fontSize: 30, marginLeft: 0, color: Colors.smoke}}>Trip Completed!</Text>
+                        
+                    </View>
+                </View>
+            )
+        } else {
+            return (
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <View style={{marginLeft: 20}}>
+                        <Icon name="ios-arrow-dropright" size={35} color={Colors.smoke}></Icon>
+                    </View>
+                    <View style={{marginLeft: "10%", alignItems: "center", justifyContent: "center", flexDirection: "row", borderLeftWidth: 2, borderLeftColor: Colors.smoke}}>
+                        <Text style={{paddingLeft: "10%", fontFamily: Fonts.default, fontWeight: "400", fontSize: 30, marginLeft: 0, color: Colors.smoke}}>{currentTargetNodeInfo.category.toUpperCase()}</Text>
+                        
+
+                    </View>
+                </View>
+                
+            )
+        }
+    }
+
+   
+   
+
 
     return (
         <View style={{flex:1}}>
             <View style={{ overflow: "hidden", width: "100%", height: height, paddingBottom: "20%", backgroundColor: Colors.lighterGray}}>  
-                <View style={{marginLeft: 17, height: height*.1, zIndex: 1, width: width*.9, flexGrow: .05, marginTop: 10, backgroundColor: Colors.darkGray, borderRadius: 20,}}>
-
+                <View style={{justifyContent: "center", marginLeft: 17, height: height*.1, zIndex: 1, width: width*.9, flexGrow: .05, marginTop: 15, backgroundColor: Colors.darkGray, borderRadius: 20,}}>
+                    { headerText()}
                 </View>  
                 <SvgPanZoom
                     canvasHeight  = {2244}
@@ -178,17 +214,25 @@ export default function MapScreen({route, props}) {
                     >
                         <Image
                             href={map} 
-                            
                         /> 
+                        
+
+                        
                         { basePath() }
                         { clearPath() }
-                        { drawPath() }
+                        <Circle cx={pointerCoordinates[0]} cy={pointerCoordinates[1]} r={18} stroke={Colors.darkGreen} strokeWidth={7} fill={Colors.darkGreen}/>
+                        <Circle cx={targetCoordinates[0]} cy={targetCoordinates[1]} r={13} stroke={Colors.darkGreen} strokeWidth={7} fill={Colors.darkGreen}/>
+                        
+
 
                 </SvgPanZoom>
               
-                <View style={{position: "", marginLeft: 4, paddingTop: "10%", marginTop: height*.7, height: height*.9, borderTopEndRadius: 20, borderTopStartRadius: 20, backgroundColor: Colors.darkGray, width: width*.98}}>
-                    <Button title="Next Node" onPress={() => {moveToNextNode()}}></Button>
+                <View style={{ marginLeft: 4, paddingTop: "10%", marginTop: height*.6, height: height*.9, borderTopEndRadius: 20, borderTopStartRadius: 20, backgroundColor: Colors.darkGray, width: width*.98}}>
+                    <Button title="Next Node" onPress={() => {onNextPressed()}}></Button>
+                    <Button title="return" onPress={() => {navigation.navigate("SelectStore")}}></Button>
+
                 </View>
+           
             </View>     
             
     </View>

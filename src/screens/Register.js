@@ -77,7 +77,7 @@ export default function Register(props) {
                                 listName: "ignore_this_document",
                                 date: date
                             }).then(() => {
-                                navigation.navigate("ShoppingLists")
+                                navigation.navigate("Intro")
                             }).catch(error=> {
                                 console.log("couldnt create user lists ")
                             })

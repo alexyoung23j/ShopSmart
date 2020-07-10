@@ -48,9 +48,20 @@ export default function SelectStore({route, navigation }) {
     const nodeData = store.nodes
 
     function goPressed() {
+        const orderedNodes = new Array()
+
+        for (i=0; i<nodeOrder.length; i++) {
+            const nodeID = nodeOrder[i]
+            orderedNodes.push(currentNodes.find((node) => {return node.category == nodeData[nodeID].type}))
+        }
+
+        console.log(currentNodes)
+        console.log(orderedNodes)
+        console.log(nodeOrder)
+
         navigation.navigate("MapScreen", {
             pathArray: pathArray,
-            nodes: currentNodes,
+            nodes: orderedNodes,
             nodeOrder: nodeOrder,
             listName: listName
             

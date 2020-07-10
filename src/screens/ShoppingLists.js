@@ -22,9 +22,11 @@ import { getSupportedVideoFormats } from 'expo/build/AR';
 import DismissKeyboard from '../components/DimissKeyboard';
 import { set } from 'react-native-reanimated';
 
-export default function ShoppingLists(props) {
+export default function ShoppingLists({route, navigation}) {
 
     const date = new Date().toLocaleString()
+
+    const {showNewUserMessage} = route.params
 
     var user = firebase.auth().currentUser;
     var name, email, uid;
@@ -46,7 +48,6 @@ export default function ShoppingLists(props) {
     });
 
 
-    const { navigation } = props;
     const [showAddList, setShowAddList] = useState(false)
     const [currentListName, setCurrentListName] = useState("")
     const [newListID, setNewListID] = useState("")
@@ -239,7 +240,7 @@ export default function ShoppingLists(props) {
             <View style={{width: width*.88, alignSelf: "center", height: height*.001, paddingBottom: 5, borderTopColor: Colors.gray, borderTopWidth: .5}}>
             </View>
             <View style={{width: width*.88, alignSelf: "center"}}>
-                { userLists.length > 1 ? ListViews() : addNewListNote() } 
+                { (showNewUserMessage == true && userLists.length < 2) ? addNewListNote() : ListViews()} 
             </View>
             <ListModal navigation={navigation} editTitle={editListName} listData={currentListData} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
             

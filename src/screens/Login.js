@@ -59,7 +59,9 @@ export default function Login(props) {
 
         if (noErrors) {
             firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
-                navigation.navigate("ShoppingLists")
+                navigation.navigate("ShoppingLists", {
+                    showNewUserMessage: false
+                })
             }
             ).catch(error =>{
                 Alert.alert(error.message);

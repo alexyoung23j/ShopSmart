@@ -8,6 +8,7 @@ import Login from "../screens/Login";
 import ShoppingLists from "../screens/ShoppingLists"
 import SelectStore from "../screens/SelectStore"
 import MapScreen from "../screens/MapScreen"
+import Intro from "../screens/Intro"
 
 
 
@@ -47,6 +48,11 @@ export default function MainStackNavigator() {
                 <Stack.Screen 
                     name="MapScreen"
                     component={MapScreen}
+                    options={{headerShown:false, gestureEnabled: false}}
+                />
+                <Stack.Screen 
+                    name="Intro"
+                    component={Intro}
                     options={{headerShown:false, gestureEnabled: false}}
                 />
 
