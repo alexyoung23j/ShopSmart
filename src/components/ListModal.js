@@ -123,8 +123,6 @@ export default function ListModal({editTitle, listID, listData, listName, show, 
         updateListName()
         closeModal()
         onRoutePressed()
-
-        console.log("off to the next page")
     }
 
     function onNextPressed() {

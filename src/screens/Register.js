@@ -137,9 +137,9 @@ export default function Register(props) {
                                 <Text style={styles.button}>Sign Up</Text>
                             </Button>
                         </View>
-                        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                            <View style={{alignItems: 'center', position: 'relative', paddingTop: "10%"}}>
-                                <Text style={{color: Colors.default, fontSize: 17, fontFamily: Fonts.default}} > Log In</Text>
+                        <TouchableOpacity  marginTop="15%" onPress={() => navigation.navigate("Login")}>
+                            <View style={{alignItems: 'center', position: 'relative', marginTop: "10%"}}>
+                                <Text style={{color: Colors.defaultBlack, fontSize: 17, fontWeight: "500", fontFamily: Fonts.default}} > Log In</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
         justifyContent: "center",
         alignItems: "center",
-        paddingTop: "17%"
+        paddingTop: "15%"
     },
     container: {
         flex: 1,
     },
     form: {
-        flex: 0.5, 
-        paddingTop: "10%", 
+        flex: 0.39, 
+        paddingTop: "5%", 
         paddingLeft: "10%", 
         paddingRight: "10%",
         position: 'relative', 

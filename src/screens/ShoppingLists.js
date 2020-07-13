@@ -166,9 +166,13 @@ export default function ShoppingLists({route, navigation}) {
     function addNewListNote() {
         return (
             <View style={{alignItems: "center"}}>
-                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>add a list!</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>let's add a list!</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>click the pencil to create a list</Text>  
+
                 <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>swipe left to delete lists</Text>  
-                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>swipe right for quick route</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>swipe right to route a list</Text>  
+                <Text style={{paddingTop: "15%", fontFamily: Fonts.default, fontStyle: "italic" ,fontWeight: "100", fontSize: 20}}>click the arrow to edit a list</Text>  
+
             </View>
         )
     }

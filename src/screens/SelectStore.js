@@ -55,9 +55,6 @@ export default function SelectStore({route, navigation }) {
             orderedNodes.push(currentNodes.find((node) => {return node.category == nodeData[nodeID].type}))
         }
 
-        console.log(currentNodes)
-        console.log(orderedNodes)
-        console.log(nodeOrder)
 
         navigation.navigate("MapScreen", {
             pathArray: pathArray,

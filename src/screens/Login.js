@@ -92,7 +92,7 @@ export default function Login(props) {
                     />
                 </View>
                 <ErrorShow style={styles.error} errors={[nameError, emailError, passError]}/>
-                <View style={{paddingTop: "5%"}}>
+                <View style={{paddingTop: "0%"}}>
                     <View style={{alignItems: 'center', width: "100%", position: 'relative'}}>
                         <View style={{alignItems: 'center', position: 'relative', width: "100%"}}>
                             <Button rounded outline style={styles.buttonCont} onPress={(event) => onSubmit(event)} >
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     form: {
-        flex: 0.5, 
+        flex: 0.4, 
         paddingTop: "10%", 
         paddingLeft: "10%", 
         paddingRight: "10%",

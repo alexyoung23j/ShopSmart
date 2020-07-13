@@ -45,9 +45,11 @@ export default function MapScreen({route, navigation}) {
     const zoomRef = useRef(null)
 
     const [currentTargetNode, setCurrentTargetNode] = useState(nodes[1])
+    const [showCancel, setShowCancel] = useState(false)
+    const [showBackOption, setShowBackOption] = useState(true)
     const [currentTargetNodeInfo, setCurrentTargetNodeInfo] = useState(nodes[1])
     const [pointerCoordinates, setPointerCoordinates] = useState([551, 2220])
-    const [targetCoordinates, setTargetCoordinates] = useState([])
+    const [targetCoordinates, setTargetCoordinates] = useState([551, 2220])
     const [targetNodeIdx, setTargetNodeIdx] = useState(1)
     const [zoomFocus, setZoomFocus] = useState([555, 2220])
     const [currentPath, setCurrentPath] = useState("M 555 2220")
@@ -62,15 +64,31 @@ export default function MapScreen({route, navigation}) {
         setCurrentPath(pathArray[0])
         const targetNodeID = nodeOrder[targetNodeIdx]
         const targetNodeData = nodeData[targetNodeID]
-        setTargetCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+        setTimeout(() => {
+            setTargetCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+        }, 4000)
+        
     }
   //  console.log(nodes)
 
+
     function onNextPressed() {
-        if (targetNodeIdx < nodeOrder.length) {
+        if (targetNodeIdx < nodeOrder.length-1) {
             moveToNextNode()
         } else {
-            console.log("too many!")
+            const targetNodeID = nodeOrder[targetNodeIdx]
+            const targetNodeData = nodeData[targetNodeID]
+            setPointerCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+            setShowBackOption(false)
+            setShowCancel(true)
+            setErasePath(currentPath)
+            setZoomFocus([targetNodeData.x * 10, targetNodeData.y * 10])
+            setTimeout(() => {
+                setErasePath("M 0 0")
+                setCurrentPath("M 0 0")
+    
+            }, 4510)
+
         }
     }
 
@@ -86,10 +104,18 @@ export default function MapScreen({route, navigation}) {
         setZoomFocus([targetNodeData.x * 10, targetNodeData.y * 10])
         setPointerCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
 
-
+        if (targetNodeIdx < nodeOrder.length-1) {
+            const nextNodeID = nodeOrder[targetNodeIdx+1]
+            const nextNodeData = nodeData[nextNodeID]
+            setTimeout(() => {
+                setTargetCoordinates([nextNodeData.x * 10, nextNodeData.y * 10])
+    
+            }, 4500)
+        }
 
         setTimeout(() => {
             setCurrentTargetNodeInfo(nodes[targetNodeIdx+1])
+
         }, 4500)
 
 
@@ -100,10 +126,10 @@ export default function MapScreen({route, navigation}) {
     function zoomFit() {
         setCurrentPath("M 0 0")
         setTimeout(() => {
-            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*2, .25, 1500)
+            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*.3, .25, 1500)
         }, 1000)
         setTimeout(() => {
-            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*.8, .45, 1500)
+            zoomRef.current.zoomToPoint(zoomFocus[0], zoomFocus[1] - height*.3, .45, 1500)
         }, 3000)
 
         setTimeout(()=> {
@@ -112,6 +138,13 @@ export default function MapScreen({route, navigation}) {
 
         }, 4500)
 
+        
+    }
+
+    function goHome() {
+        setTimeout(() => {
+            navigation.navigate("ShoppingLists", {showNewUserMessage: false})
+        }, 1000)
         
     }
 
@@ -163,14 +196,14 @@ export default function MapScreen({route, navigation}) {
     }
 
     function headerText() {
-        if (targetNodeIdx >= nodeOrder.length) {
+        if (showCancel == true) {
             return (
                 <View style={{flexDirection: "row", alignItems: "center"}}>
                     <View style={{marginLeft: 20}}>
                         <Icon name="ios-checkmark-circle" size={35} color={Colors.smoke}></Icon>
                     </View>
                     <View style={{flexGrow: .6, alignItems: "center", flexDirection: "row"}}>
-                        <Text style={{paddingLeft: "8%", fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "400", fontSize: 30, marginLeft: 0, color: Colors.smoke}}>Trip Completed!</Text>
+                        <Text style={{paddingLeft: "8%", fontFamily: Fonts.default, fontStyle: "italic", fontWeight: "400", fontSize: 30, marginLeft: 0, color: Colors.smoke}}>Checkout Now!</Text>
                         
                     </View>
                 </View>
@@ -182,12 +215,69 @@ export default function MapScreen({route, navigation}) {
                         <Icon name="ios-arrow-dropright" size={35} color={Colors.smoke}></Icon>
                     </View>
                     <View style={{marginLeft: "10%", alignItems: "center", justifyContent: "center", flexDirection: "row", borderLeftWidth: 2, borderLeftColor: Colors.smoke}}>
-                        <Text style={{paddingLeft: "10%", fontFamily: Fonts.default, fontWeight: "400", fontSize: 30, marginLeft: 0, color: Colors.smoke}}>{currentTargetNodeInfo.category.toUpperCase()}</Text>
-                        
-
+                        <Text style={{paddingLeft: "10%", fontFamily: Fonts.default, fontWeight: "400", fontSize: 20, marginLeft: 0, color: Colors.smoke}}>{currentTargetNodeInfo.category.toUpperCase().slice(0, 14)}</Text>
                     </View>
                 </View>
                 
+            )
+        }
+    }
+
+    function bottomDetails() {
+        if (showCancel == false) {
+            return (
+                <View style={{ marginLeft: 4, height: height*.18, position: "absolute", flexDirection: "row", alignItems: "center",  marginTop: 550, borderTopEndRadius: 20, borderTopStartRadius: 20, backgroundColor: Colors.darkGray, width: width*.98}}>
+                       <TouchableOpacity onPress={() => onNextPressed()} style={{width: width*.2, height: height*.09, marginLeft: 10, backgroundColor: Colors.green, borderRadius: 10,  alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 25, marginLeft: 0, color: Colors.smoke}}>next</Text>
+                        </TouchableOpacity>
+                       <FlatList 
+                            data={currentTargetNodeInfo.items} 
+                            renderItem={({item}) => {
+                                return (
+                                    <View style={styles.dropDownItems}> 
+                                        <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 20, marginLeft: 0, color: Colors.smoke}}>{item.slice(0, 14)}</Text>
+                                    </View>
+                                )
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            style={{ alignContent: "center", alignSelf: "center",  borderWidth: 1, borderColor: Colors.smoke, borderRadius: 10, marginLeft: 15, paddingBottom: 5, paddingTop: 5}}
+                        />
+
+                        
+
+                        <TouchableOpacity onPress={() => setShowCancel(true)}style={{width: width*.2, height: height*.09, marginLeft: 15, marginRight: 10,  backgroundColor: Colors.deleteRed, borderRadius: 10,  alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 25, marginLeft: 0, color: Colors.smoke}}>exit</Text>
+                        </TouchableOpacity>
+
+    
+                </View>
+            )
+        } else {
+            return (
+                <View style={{ marginLeft: 4, height: height*.14, position: "absolute", flexDirection: "row", alignItems: "center",  marginTop: 580, justifyContent: "center", borderTopEndRadius: 20, borderTopStartRadius: 20, backgroundColor: Colors.darkGray, width: width*.98}}>
+                       
+                       {returnButton()}
+                       <TouchableOpacity onPress={() =>  goHome()} style={{width: width*.5, height: height*.09,  backgroundColor: Colors.deleteRed, borderRadius: 10,  alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 25, marginLeft: 0, color: Colors.smoke}}>exit navigation</Text>
+                        </TouchableOpacity>
+                </View>
+            )
+        } 
+        
+    }
+
+    function returnButton() {
+        if (showBackOption == true) {
+            return (
+                <TouchableOpacity onPress={() =>  setShowCancel(false)} style={{width: width*.1, height: height*.09, borderRadius: 10, marginRight: 40, alignItems: "center", justifyContent: "center"}}>
+                    <Icon name="ios-arrow-back" size={40} color={Colors.smoke}/>
+                </TouchableOpacity>
+            ) 
+        } else {
+            return (
+                <View>
+
+                </View>
             )
         }
     }
@@ -198,7 +288,7 @@ export default function MapScreen({route, navigation}) {
 
     return (
         <View style={{flex:1}}>
-            <View style={{ overflow: "hidden", width: "100%", height: height, paddingBottom: "20%", backgroundColor: Colors.lighterGray}}>  
+            <View style={{ overflow: "hidden", width: "100%", paddingBottom: "20%", height: height, backgroundColor: Colors.lighterGray}}>  
                 <View style={{justifyContent: "center", marginLeft: 17, height: height*.1, zIndex: 1, width: width*.9, flexGrow: .05, marginTop: 15, backgroundColor: Colors.darkGray, borderRadius: 20,}}>
                     { headerText()}
                 </View>  
@@ -210,13 +300,10 @@ export default function MapScreen({route, navigation}) {
                     //initialZoom   = {.5}
                     //onZoom        = {(zoom) => { console.log("yo") }}
                     //canvasStyle   = {{ backgroundColor: 'yellow' }}
-                    //style={{height: "10%", paddingBottom: "10%", flex:1}}
                     >
                         <Image
                             href={map} 
                         /> 
-                        
-
                         
                         { basePath() }
                         { clearPath() }
@@ -226,12 +313,9 @@ export default function MapScreen({route, navigation}) {
 
 
                 </SvgPanZoom>
+                
               
-                <View style={{ marginLeft: 4, paddingTop: "10%", marginTop: height*.6, height: height*.9, borderTopEndRadius: 20, borderTopStartRadius: 20, backgroundColor: Colors.darkGray, width: width*.98}}>
-                    <Button title="Next Node" onPress={() => {onNextPressed()}}></Button>
-                    <Button title="return" onPress={() => {navigation.navigate("SelectStore")}}></Button>
-
-                </View>
+               { bottomDetails()}
            
             </View>     
             
@@ -245,6 +329,12 @@ export default function MapScreen({route, navigation}) {
 let { height, width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+    dropDownItems: {
+        height: height*.038,
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+    }, 
     item: {
         backgroundColor: Colors.lightGray,
         height: height*.07,
@@ -259,15 +349,6 @@ const styles = StyleSheet.create({
         marginTop: width*.4, 
         borderRadius: 30,
     },
-    dropDownItems: {
-        height: height*.065,
-        justifyContent: "flex-start",
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: Colors.smoke,
-        borderColor: Colors.gray,
-        borderTopWidth: .3,
-    }, 
     dropDownComplete: {
         marginTop: 28,
         marginLeft: 15,
