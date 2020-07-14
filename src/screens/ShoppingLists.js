@@ -55,6 +55,7 @@ export default function ShoppingLists({route, navigation}) {
     const [deleting, setDeleting] = useState(false)
     const [userLists, setUserLists] = useState(grabbedLists)
     const [currentListData, setCurrentListData] = useState([])
+    const [showSignOut, setShowSignOut] = useState(false)
 
 
    
@@ -162,6 +163,14 @@ export default function ShoppingLists({route, navigation}) {
         });
     }
 
+    function signOutUser() {
+        firebase.auth().signOut().then(() => {
+            navigation.navigate("Login")
+          }).catch(function(error) {
+            console.log("Not working")
+          });
+    }
+
 
     function addNewListNote() {
         return (
@@ -247,7 +256,25 @@ export default function ShoppingLists({route, navigation}) {
                 { (showNewUserMessage == true && userLists.length < 2) ? addNewListNote() : ListViews()} 
             </View>
             <ListModal navigation={navigation} editTitle={editListName} listData={currentListData} listID={newListID} listName={currentListName} show={showAddList} onClosePressed={()=>modalClose()}/>             
-            
+            <View style={{position: "absolute", marginTop: height*.92, marginLeft: width*.85}}>
+                <TouchableOpacity onPress={() => setShowSignOut(true)}>
+                    <Icon name="ios-log-out" size={25} color={Colors.defaultBlack}/>
+                </TouchableOpacity>
+            </View>
+            <Modal
+                isVisible={showSignOut}
+                style={styles.titleModal}
+            >
+                <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center", flex: 1, marginTop: "15%"}}>
+                    <Text style={{fontFamily: Fonts.default, fontSize: 25, color: Colors.defaultBlack, marginRight: 20}}>Sign Out?</Text>
+                    <TouchableOpacity onPress={() => signOutUser()}>
+                        <Icon name="ios-log-out" size={25} color={Colors.defaultBlack}></Icon>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={{flex:.5, marginTop: "15%"}}onPress={() => setShowSignOut(false)}>
+                    <Icon name="ios-close" size={35} color={Colors.defaultBlack}></Icon>
+                </TouchableOpacity>
+            </Modal>
         </View> 
     );
         
@@ -258,6 +285,25 @@ export default function ShoppingLists({route, navigation}) {
 let { height, width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+    textEntryView: {
+        justifyContent: "center",
+        height: height*.06,
+        width: width *.5,
+        borderRadius: 20,
+        backgroundColor: Colors.lightGray,
+        borderBottomColor: Colors.gray,
+        borderBottomWidth: 0.5,
+        paddingLeft: "10%",
+        flexDirection: "column"
+    },
+    titleModal: {
+        flex:.4,
+        marginTop: height*.35,
+        borderRadius: 20,
+        margin: width*.2,
+        backgroundColor: Colors.smoke,
+        alignItems: "center",
+    },
     delete: {
         height: height*.065,
         borderRadius: 3,

@@ -1,6 +1,6 @@
 import React, {useState, isValidElement, useEffect } from 'react';
 import { Form, Input, Item, Label, Button, Card, CheckBox } from 'native-base';
-import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert, FlatList, ListViewBase } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, ImageBackground, Alert, FlatList, ListViewBase, Image } from 'react-native';
 import CircleCheckBox, {LABEL_POSITION} from 'react-native-circle-checkbox';  
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
@@ -41,7 +41,8 @@ export default function SelectStore({route, navigation }) {
     const [currentNodes, setCurrentNodes] = useState([])
     const [searchString, setSearchString] = useState("")
     const [chosen, setChosen] = useState(false)
-    const [buttonColor, setButtonColor] = useState(Colors.lightGray)
+    const [buttonColor, setButtonColor] = useState(Colors.gray)
+    const [cardColor, setCardColor] = useState(Colors.lightGray)
     const [buttonText, setButtonText] = useState("")
 
     const store = require("../stores/vons.json")
@@ -143,17 +144,7 @@ export default function SelectStore({route, navigation }) {
         )
     }
 
-    function showStore() {
-        return (
-            <View style={styles.item}>
-                <View style={{ alignContent: "center", flexDirection: "row", justifyContent: 'center', alignSelf: "center", alignItems: 'center' }}>
-                    <Text style={{width: width*.2, fontFamily: Fonts.default, fontSize: 20, marginLeft: 15 }}>Vons</Text>
-                    <Text style={{ fontFamily: Fonts.default, fontStyle: "italic", fontSize: 15, marginLeft: 5, marginRight: 15 }}>3993 Governor Dr</Text>
-
-                </View>
-            </View>
-        )
-    }
+    
 
     function emptyView() {
         return (
@@ -163,11 +154,42 @@ export default function SelectStore({route, navigation }) {
         )
     }
 
-    function emptyView2() {
+    function storeShow() {
+        if (chosen == true) {
+            return (
+                <View style={{marginTop: 0, marginBottom: 40, height: height*.20, backgroundColor: Colors.smoke, borderRadius: 20,}}>
+                    <View style={{ alignContent: "center", justifyContent: 'center', alignSelf: "center", alignItems: 'center' }}>
+                        <View style={styles.item}>
+                            <View style={{ alignContent: "center", flexDirection: "column", justifyContent: 'center', alignSelf: "center", alignItems: 'center'}}>
+                                <Image style={{width: 70, height: 60}} source={require("../photos/vonslogo.png")}/>
+                                <Text style={{ fontFamily: Fonts.default, fontStyle: "italic", fontSize: 15,  paddingBottom: "3%", }}>3993 GOVERNOR DR.</Text>
+                                <Text style={{ fontFamily: Fonts.default, fontStyle: "italic", fontSize: 15,  paddingBottom: "3%", }}>CA 92122</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            )
+        } else {
+            return (
+                <View style={{marginTop: 0, marginBottom: 40, height: height*.20,}}>
+                    <View style={{ alignContent: "center", justifyContent: 'center', alignSelf: "center", alignItems: 'center' }}>
+                        <Text style={{width: width*.7, fontFamily: Fonts.default, fontSize: 20, marginLeft: 45 }}></Text>
+                    </View>
+                </View>
+            )
+        }
+        
+    }
+
+    function searchBar() {
         return (
-            <View style={{marginTop: 150, marginBottom: 3, height: height*.07,}}>
-                <View style={{ alignContent: "center", justifyContent: 'center', alignSelf: "center", alignItems: 'center' }}>
-                    <Text style={{width: width*.7, fontFamily: Fonts.default, fontSize: 20, marginLeft: 45 }}></Text>
+            <View>
+                <View style={styles.searchBar}>
+                    <StaticTextBox placeholder="Search Stores..." text={searchString} onChange={(string) => {setSearchString(string)}} onPress={() => {}}/>
+                </View>  
+                
+                <View style={{borderBottomEndRadius: 20, borderBottomStartRadius: 20, marginTop: 47, width: width*.85, backgroundColor: Colors.smoke, position: "absolute", zIndex: 1}}>
+                    {searchString.length > 0 ? dropDownComplete() : emptyView()}
                 </View>
             </View>
         )
@@ -175,27 +197,27 @@ export default function SelectStore({route, navigation }) {
  
  
    return (
-    <View style={{backgroundColor: Colors.smoke, flex: 1, alignItems: "center"}}>
-        <View style={{marginTop: "5%"}}></View>
-        <View style={{flexDirection: "row", marginTop: "5%"}}>
+    <View style={{backgroundColor: Colors.lightGray, flex: 1, alignItems: "center"}}>
+        <View style={{marginTop: "15%"}}></View>
+        <View style={{flexDirection: "row", marginTop: "5%", }}>
             <Text style={styles.headerText}>Select a Store </Text>
         </View>
         <View style={{marginTop: "5%"}}></View>
-        <View style={{alignItems: "center", backgroundColor: Colors.gray, flex: 1, borderRadius: 30, width: width*.93, marginBottom: "20%"}}>
-            <View style={styles.searchBar}>
-                <StaticTextBox placeholder="Search Stores..." text={searchString} onChange={(string) => {setSearchString(string)}} onPress={() => {}}/>
-            </View>  
-            
-            <View style={{borderBottomEndRadius: 20, borderBottomStartRadius: 20, marginTop: 47, width: width*.85, backgroundColor: Colors.smoke, position: "absolute", zIndex: 1}}>
-                {searchString.length > 0 ? dropDownComplete() : emptyView()}
-            </View>
+        <View style={{alignItems: "center",  flex: 1, borderRadius: 30, width: width*.93, marginBottom: "30%"}}>
+            { searchBar()}
             <View>
-                { chosen == true ? showStore() : emptyView2()}
+                {storeShow()}
             </View>
             <View style={styles.routeButton}>
                 <Button style={{ width: width*.45, borderRadius: 30, justifyContent: "center", backgroundColor: buttonColor}} onPress={() => {goPressed()}}>
                     <Text style={{fontFamily: Fonts.default}}>{buttonText}</Text>
                 </Button>
+            </View>
+            <View>
+                <TouchableOpacity onPress={() =>  navigation.navigate("ShoppingLists", {showNewUserMessage: false})} style={{width: width*.1, height: height*.09, borderRadius: 10, marginTop: 20, alignItems: "center", justifyContent: "center"}}>
+                    <Icon name="ios-arrow-back" size={30} color={Colors.darkGray}/>
+                </TouchableOpacity>
+
             </View>
 
             
@@ -215,17 +237,18 @@ let { height, width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: Colors.lightGray,
+        marginTop: 45,
         height: height*.07,
-        borderRadius: 10,
-        marginTop: 150,
-        marginBottom: 3,
+        borderRadius: 15,
+        width: width*.7,
+        marginBottom: 10,
         justifyContent: "center",
-        alignSelf: "center"
+        alignSelf: "center", 
+        
     }, 
     routeButton: {
         
-        marginTop: width*.4, 
+        marginTop: width*.15, 
         borderRadius: 30,
     },
     dropDownItems: {
@@ -247,7 +270,7 @@ const styles = StyleSheet.create({
         flex: .3,
         paddingTop: "8%",
         marginBottom: 10,
-        zIndex: 2
+        zIndex: 2,
     }, 
     delete: {
         height: height*.065,

@@ -1,0 +1,412 @@
+{
+    "nodes": [
+        {
+            "key": 0,
+            "type": "entrance",
+            "x": 55,
+            "y": 223
+        },
+        {
+            "key": 1,
+            "type": "premade cakes",
+            "x": 4,
+            "y": 200
+        },
+        {
+            "key": 2,
+            "type": "pastries",
+            "x": 4,
+            "y": 177
+        },
+        {
+            "key": 3,
+            "type": "cafeteria",
+            "x": 4,
+            "y": 144
+        },
+        {
+            "key": 4,
+            "type": "deli",
+            "x": 4,
+            "y": 82
+        },
+        {
+            "key": 5,
+            "type": "spreads",
+            "x": 4,
+            "y": 40
+        },
+        {
+            "key": 6,
+            "type": "cookies",
+            "x": 19,
+            "y": 147
+        },
+        {
+            "key": 7,
+            "type": "lunches",
+            "x": 19,
+            "y": 105
+        },
+        {
+            "key": 8,
+            "type": "premade soups",
+            "x": 19,
+            "y": 63
+        },
+        {
+            "key": 9,
+            "type": "cheeses",
+            "x": 19,
+            "y": 66
+        },
+        {
+            "key": 10,
+            "type": "breads",
+            "x": 37,
+            "y": 146
+        },
+        {
+            "key": 11,
+            "type": "peanut butter",
+            "x": 37,
+            "y": 124
+        },
+        {
+            "key": 12,
+            "type": "water bottles",
+            "x": 37,
+            "y": 43
+        },
+        {
+            "key": 13,
+            "type": "pet food",
+            "x": 40,
+            "y": 137
+        },
+        {
+            "key": 14,
+            "type": "pet supplies",
+            "x": 40,
+            "y": 85
+        },
+        {
+            "key": 15,
+            "type": "cleaning supplies",
+            "x": 40,
+            "y": 40
+        },
+        {
+            "key": 16,
+            "type": "soaps",
+            "x": 60,
+            "y": 137
+        },
+        {
+            "key": 17,
+            "type": "laundry",
+            "x": 60,
+            "y": 85
+        },
+        {
+            "key": 18,
+            "type": "paper",
+            "x": 60,
+            "y": 40
+        },
+        {
+            "key": 19,
+            "type": "medicine",
+            "x": 63,
+            "y": 137
+        },
+        {
+            "key": 20,
+            "type": "baby care",
+            "x": 63,
+            "y": 85
+        },
+        {
+            "key": 21,
+            "type": "hair care",
+            "x": 83,
+            "y": 137
+        },
+        {
+            "key": 22,
+            "type": "skin care",
+            "x": 83,
+            "y": 85
+        },
+        {
+            "key": 23,
+            "type": "sports drinks",
+            "x": 88,
+            "y": 137
+        },
+        {
+            "key": 24,
+            "type": "soft drinks",
+            "x": 88,
+            "y": 40
+        },
+        {
+            "key": 25,
+            "type": "ice cream",
+            "x": 105,
+            "y": 137
+        },
+        {
+            "key": 26,
+            "type": "frozen desserts",
+            "x": 105,
+            "y": 85
+        },
+        {
+            "key": 27,
+            "type": "frozen meals",
+            "x": 110,
+            "y": 137
+        },
+        {
+            "key": 28,
+            "type": "frozen snacks",
+            "x": 110,
+            "y": 40
+        },
+        {
+            "key": 29,
+            "type": "pizzas",
+            "x": 128,
+            "y": 137
+        },
+        {
+            "key": 30,
+            "type": "frozen breakfast",
+            "x": 128,
+            "y": 85
+        },
+        {
+            "key": 31,
+            "type": "frozen vegetables",
+            "x": 134,
+            "y": 137
+        },
+        {
+            "key": 32,
+            "type": "frozen meats",
+            "x": 134,
+            "y": 85
+        },
+        {
+            "key": 33,
+            "type": "packaged cheeses",
+            "x": 151,
+            "y": 137
+        },
+        {
+            "key": 34,
+            "type": "yogurt",
+            "x": 151,
+            "y": 85
+        },
+        {
+            "key": 35,
+            "type": "candy",
+            "x": 157,
+            "y": 137
+        },
+        {
+            "key": 36,
+            "type": "cookies",
+            "x": 157,
+            "y": 85
+        },
+        {
+            "key": 37,
+            "type": "crackers",
+            "x": 157,
+            "y": 40
+        },
+        {
+            "key": 38,
+            "type": "cereal",
+            "x": 175,
+            "y": 137
+        },
+        {
+            "key": 39,
+            "type": "coffee",
+            "x": 175,
+            "y": 40
+        },
+        {
+            "key": 40,
+            "type": "juices",
+            "x": 179,
+            "y": 137
+        },
+        {
+            "key": 41,
+            "type": "cooking oil",
+            "x": 179,
+            "y": 85
+        },
+        {
+            "key": 42,
+            "type": "paper utensils",
+            "x": 199,
+            "y": 137
+        },
+        {
+            "key": 43,
+            "type": "food storage",
+            "x": 199,
+            "y": 85
+        },
+        {
+            "key": 44,
+            "type": "eggs",
+            "x": 200,
+            "y": 40
+        },
+        {
+            "key": 45,
+            "type": "pasta",
+            "x": 204,
+            "y": 137
+        },
+        {
+            "key": 46,
+            "type": "canned fruit",
+            "x": 204,
+            "y": 85
+        },
+        {
+            "key": 47,
+            "type": "hispanic foods",
+            "x": 221,
+            "y": 137
+        },
+        {
+            "key": 48,
+            "type": "soups",
+            "x": 221,
+            "y": 40
+        },
+        {
+            "key": 49,
+            "type": "chips",
+            "x": 224,
+            "y": 40
+        },
+        {
+            "key": 50,
+            "type": "condiments",
+            "x": 226,
+            "y": 125
+        },
+        {
+            "key": 51,
+            "type": "canned meats",
+            "x": 226,
+            "y": 40
+        },
+        {
+            "key": 52,
+            "type": "wine",
+            "x": 244,
+            "y": 88
+        },
+        {
+            "key": 53,
+            "type": "premium wine",
+            "x": 250,
+            "y": 84
+        },
+        {
+            "key": 54,
+            "type": "champagne",
+            "x": 266,
+            "y": 84
+        },
+        {
+            "key": 55,
+            "type": "liquor",
+            "x": 272,
+            "y": 84
+        },
+        {
+            "key": 56,
+            "type": "salads",
+            "x": 312,
+            "y": 177
+        },
+        {
+            "key": 57,
+            "type": "vegetables",
+            "x": 312,
+            "y": 127
+        },
+        {
+            "key": 58,
+            "type": "beer",
+            "x": 312,
+            "y": 52
+        },
+        {
+            "key": 59,
+            "type": "berries",
+            "x": 280,
+            "y": 202
+        },
+        {
+            "key": 60,
+            "type": "fruits",
+            "x": 280,
+            "y": 168
+        },
+        {
+            "key": 61,
+            "type": "potatoes",
+            "x": 280,
+            "y": 136
+        },
+        {
+            "key": 62,
+            "type": "fruits 2",
+            "x": 241,
+            "y": 192
+        },
+        {
+            "key": 63,
+            "type": "fish",
+            "x": 38,
+            "y": 11
+        },
+        {
+            "key": 64,
+            "type": "ground meat",
+            "x": 59,
+            "y": 11
+        },
+        {
+            "key": 65,
+            "type": "chicken",
+            "x": 83,
+            "y": 11
+        },
+        {
+            "key": 66,
+            "type": "milk",
+            "x": 120,
+            "y": 11
+        },
+        {
+            "key": 67,
+            "type": "butter",
+            "x": 287,
+            "y": 11
+        }
+    ]
+}

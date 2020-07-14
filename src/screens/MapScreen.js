@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Dimensions, KeyboardAvoidingView, TextInput, Im
 import CircleCheckBox, {LABEL_POSITION} from 'react-native-circle-checkbox';  
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
-import { Svg, Rect, Path, Line, Circle, Image, G, Polyline } from 'react-native-svg';
+import { Svg, Rect, Path, Line, Circle, Image, G, Polyline, Defs, ClipPath } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -41,6 +41,8 @@ export default function MapScreen({route, navigation}) {
     const { listName } = route.params;
 
     const store = require("../stores/vons.json")
+    const markers = require("../stores/markers.json")
+    const markerData = markers.nodes
     const nodeData = store.nodes
     const zoomRef = useRef(null)
 
@@ -50,6 +52,7 @@ export default function MapScreen({route, navigation}) {
     const [currentTargetNodeInfo, setCurrentTargetNodeInfo] = useState(nodes[1])
     const [pointerCoordinates, setPointerCoordinates] = useState([551, 2220])
     const [targetCoordinates, setTargetCoordinates] = useState([551, 2220])
+    const [markerCoordinates, setMarkerCoordinates] = useState([2200, 2220])
     const [targetNodeIdx, setTargetNodeIdx] = useState(1)
     const [zoomFocus, setZoomFocus] = useState([555, 2220])
     const [currentPath, setCurrentPath] = useState("M 555 2220")
@@ -64,8 +67,10 @@ export default function MapScreen({route, navigation}) {
         setCurrentPath(pathArray[0])
         const targetNodeID = nodeOrder[targetNodeIdx]
         const targetNodeData = nodeData[targetNodeID]
+        const markerNodeData = markerData[targetNodeID]
         setTimeout(() => {
             setTargetCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+            setMarkerCoordinates([markerNodeData.x * 10, markerNodeData.y * 10])
         }, 4000)
         
     }
@@ -79,15 +84,21 @@ export default function MapScreen({route, navigation}) {
             const targetNodeID = nodeOrder[targetNodeIdx]
             const targetNodeData = nodeData[targetNodeID]
             setPointerCoordinates([targetNodeData.x * 10, targetNodeData.y * 10])
+            setMarkerCoordinates([2220, 2220])
             setShowBackOption(false)
             setShowCancel(true)
             setErasePath(currentPath)
-            setZoomFocus([targetNodeData.x * 10, targetNodeData.y * 10])
+            setCurrentPath("M 0 0")
+            setTimeout(() => {
+                zoomRef.current.zoomToPoint(targetNodeData.x * 10, targetNodeData.y * 10 - height*.3, .3, 1500)
+            }, 1000)
+            
+
+
             setTimeout(() => {
                 setErasePath("M 0 0")
-                setCurrentPath("M 0 0")
     
-            }, 4510)
+            }, 2500)
 
         }
     }
@@ -107,9 +118,12 @@ export default function MapScreen({route, navigation}) {
         if (targetNodeIdx < nodeOrder.length-1) {
             const nextNodeID = nodeOrder[targetNodeIdx+1]
             const nextNodeData = nodeData[nextNodeID]
+            const markerNodeData = markerData[nextNodeID]
+
             setTimeout(() => {
                 setTargetCoordinates([nextNodeData.x * 10, nextNodeData.y * 10])
-    
+                setMarkerCoordinates([markerNodeData.x * 10, markerNodeData.y * 10])
+
             }, 4500)
         }
 
@@ -144,7 +158,7 @@ export default function MapScreen({route, navigation}) {
     function goHome() {
         setTimeout(() => {
             navigation.navigate("ShoppingLists", {showNewUserMessage: false})
-        }, 1000)
+        }, 300)
         
     }
 
@@ -230,21 +244,18 @@ export default function MapScreen({route, navigation}) {
                        <TouchableOpacity onPress={() => onNextPressed()} style={{width: width*.2, height: height*.09, marginLeft: 10, backgroundColor: Colors.green, borderRadius: 10,  alignItems: "center", justifyContent: "center"}}>
                             <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 25, marginLeft: 0, color: Colors.smoke}}>next</Text>
                         </TouchableOpacity>
-                       <FlatList 
-                            data={currentTargetNodeInfo.items} 
-                            renderItem={({item}) => {
-                                return (
-                                    <View style={styles.dropDownItems}> 
-                                        <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 20, marginLeft: 0, color: Colors.smoke}}>{item.slice(0, 14)}</Text>
-                                    </View>
-                                )
-                            }}
-                            keyExtractor={(item, index) => index.toString()}
-                            style={{ alignContent: "center", alignSelf: "center",  borderWidth: 1, borderColor: Colors.smoke, borderRadius: 10, marginLeft: 15, paddingBottom: 5, paddingTop: 5}}
-                        />
-
-                        
-
+                            <FlatList 
+                                data={currentTargetNodeInfo.items} 
+                                renderItem={({item}) => {
+                                    return (
+                                        <View style={styles.dropDownItems}> 
+                                            <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 20, marginLeft: 0, color: Colors.smoke}}>{item.slice(0, 14)}</Text>
+                                        </View>
+                                    )
+                                }}
+                                keyExtractor={(item, index) => index.toString()}
+                                style={{ alignContent: "center", alignSelf: "center",  borderWidth: 1, borderColor: Colors.smoke, borderRadius: 10, marginLeft: 15, paddingBottom: 5, paddingTop: 5}}
+                            />
                         <TouchableOpacity onPress={() => setShowCancel(true)}style={{width: width*.2, height: height*.09, marginLeft: 15, marginRight: 10,  backgroundColor: Colors.deleteRed, borderRadius: 10,  alignItems: "center", justifyContent: "center"}}>
                             <Text style={{ fontFamily: Fonts.default, fontWeight: "400", fontSize: 25, marginLeft: 0, color: Colors.smoke}}>exit</Text>
                         </TouchableOpacity>
@@ -270,7 +281,7 @@ export default function MapScreen({route, navigation}) {
         if (showBackOption == true) {
             return (
                 <TouchableOpacity onPress={() =>  setShowCancel(false)} style={{width: width*.1, height: height*.09, borderRadius: 10, marginRight: 40, alignItems: "center", justifyContent: "center"}}>
-                    <Icon name="ios-arrow-back" size={40} color={Colors.smoke}/>
+                    <Icon name="ios-arrow-back" size={50} color={Colors.smoke}/>
                 </TouchableOpacity>
             ) 
         } else {
@@ -280,6 +291,22 @@ export default function MapScreen({route, navigation}) {
                 </View>
             )
         }
+    }
+
+    function floatingBubble() {
+        const x = markerCoordinates[0]
+        const y = markerCoordinates[1]
+        return (
+                <Image
+                    x={x-67}
+                    y={y-125}
+                    width="4%"
+                    height="6%"
+                    preserveAspectRatio="xMidYMid"
+                    opacity={.8}
+                    href={require('../photos/marker.png')}
+                />
+        )
     }
 
    
@@ -304,11 +331,14 @@ export default function MapScreen({route, navigation}) {
                         <Image
                             href={map} 
                         /> 
-                        
                         { basePath() }
                         { clearPath() }
                         <Circle cx={pointerCoordinates[0]} cy={pointerCoordinates[1]} r={18} stroke={Colors.darkGreen} strokeWidth={7} fill={Colors.darkGreen}/>
                         <Circle cx={targetCoordinates[0]} cy={targetCoordinates[1]} r={13} stroke={Colors.darkGreen} strokeWidth={7} fill={Colors.darkGreen}/>
+                        { floatingBubble()}
+
+
+                        
                         
 
 
