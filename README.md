@@ -6,6 +6,10 @@ In the context of a shopping trip, the checkout/entrance to the store is that st
 
 The map functionality was created using animations and react-native-svg; no APIs or external map applications were used. 
 
+Part 1 Demo: 
+
 ![Part 1](demo1.gif)
+
+PArt 2 Demo: 
 
 ![Part 2](demo2.gif)
